@@ -31,10 +31,16 @@ function App() {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = eventBus.on('cart:updated', ({ count }) => {
+    const unsubscribeUpdated = eventBus.on('cart:updated', ({ count }) => {
       setCartCount(count);
     });
-    return unsubscribe;
+    const unsubscribeClear = eventBus.on('cart:clear', () => {
+      setCartCount(0);
+    });
+    return () => {
+      unsubscribeUpdated();
+      unsubscribeClear();
+    };
   }, []);
 
   return (

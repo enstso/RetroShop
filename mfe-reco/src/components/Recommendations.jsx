@@ -9,7 +9,7 @@ function Recommendations() {
   const [recos, setRecos] = useState(PRODUCTS.slice(0, 3));
 
   useEffect(() => {
-    const unsubscribe = eventBus.on('cart:updated', ({ items }) => {
+    const unsubscribeUpdated = eventBus.on('cart:updated', ({ items }) => {
       if (!items || items.length === 0) {
         setRecos(PRODUCTS.slice(0, 3));
         return;
@@ -24,7 +24,13 @@ function Recommendations() {
       );
       setRecos([...sameCategory, ...fillers].slice(0, 3));
     });
-    return unsubscribe;
+    const unsubscribeClear = eventBus.on('cart:clear', () => {
+      setRecos(PRODUCTS.slice(0, 3));
+    });
+    return () => {
+      unsubscribeUpdated();
+      unsubscribeClear();
+    };
   }, []);
 
   const handleAddReco = (product) => {

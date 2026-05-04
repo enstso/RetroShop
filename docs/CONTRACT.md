@@ -35,6 +35,27 @@ même produit peut être ajouté plusieurs fois sans collision.
 
 ---
 
+### `cart:clear`
+
+Demande la remise à zéro du panier. Peut être émis depuis n'importe quel MFE.
+
+| Champ      | Émetteur(s) | Écouteur(s)                          |
+| ---------- | ----------- | ------------------------------------ |
+| Évènement  | `mfe-cart`  | `mfe-cart`, `mfe-reco`, `shell`      |
+
+**Payload** :
+
+```ts
+{
+  timestamp: number   // Date.now() au moment de l'émission
+}
+```
+
+`mfe-cart` réagit en vidant son state (ce qui déclenche au passage un `cart:updated`
+avec `items: []`). `mfe-reco` revient à ses 3 recos par défaut. `shell` remet le badge à 0.
+
+---
+
 ### `cart:updated`
 
 Diffuse l'état complet du panier après chaque changement (ajout, suppression, vidage).
@@ -67,12 +88,12 @@ Aucun événement `cart:clear` séparé n'est utilisé.
 
 ## Qui émet quoi, qui écoute quoi
 
-| MFE         | Émet                          | Écoute                       |
-| ----------- | ----------------------------- | ---------------------------- |
-| mfe-product | `cart:add`                    | —                            |
-| mfe-cart    | `cart:updated`                | `cart:add`                   |
-| mfe-reco    | `cart:add`                    | `cart:updated`               |
-| shell       | —                             | `cart:updated` (badge)       |
+| MFE         | Émet                                | Écoute                                  |
+| ----------- | ----------------------------------- | --------------------------------------- |
+| mfe-product | `cart:add`                          | —                                       |
+| mfe-cart    | `cart:updated`, `cart:clear`        | `cart:add`, `cart:clear`                |
+| mfe-reco    | `cart:add`                          | `cart:updated`, `cart:clear`            |
+| shell       | —                                   | `cart:updated` (badge), `cart:clear`    |
 
 ---
 

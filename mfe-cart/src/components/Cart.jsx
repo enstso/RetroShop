@@ -10,13 +10,19 @@ function Cart() {
   const total = items.reduce((sum, item) => sum + item.price, 0);
 
   useEffect(() => {
-    const unsubscribe = eventBus.on('cart:add', (product) => {
+    const unsubscribeAdd = eventBus.on('cart:add', (product) => {
       setItems((prev) => [
         ...prev,
         { ...product, cartId: `${product.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}` },
       ]);
     });
-    return unsubscribe;
+    const unsubscribeClear = eventBus.on('cart:clear', () => {
+      setItems([]);
+    });
+    return () => {
+      unsubscribeAdd();
+      unsubscribeClear();
+    };
   }, []);
 
   useEffect(() => {
@@ -32,7 +38,7 @@ function Cart() {
   };
 
   const handleClear = () => {
-    setItems([]);
+    eventBus.emit('cart:clear', { timestamp: Date.now() });
   };
 
   return (
