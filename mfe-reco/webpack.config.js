@@ -1,10 +1,14 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
+const deps = require('./package.json').dependencies;
 
 module.exports = {
   entry: './src/index.js',
   mode: 'development',
+  output: {
+    publicPath: 'http://localhost:3003/',
+  },
   devServer: {
     port: 3003,
     historyApiFallback: true,
@@ -36,7 +40,15 @@ module.exports = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      // TODO: configurer ce MFE pour exposer le composant Recommendations
+      name: 'mfeReco',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './Recommendations': './src/components/Recommendations',
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: deps.react },
+        'react-dom': { singleton: true, requiredVersion: deps['react-dom'] },
+      },
     }),
     new HtmlWebpackPlugin({
       template: './public/index.html',

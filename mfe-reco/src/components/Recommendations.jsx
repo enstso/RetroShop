@@ -7,11 +7,26 @@ function Recommendations() {
   const [recos, setRecos] = useState(PRODUCTS.slice(0, 3));
 
   useEffect(() => {
-    // TODO: adapter les recommandations en fonction du contenu du panier
+    const unsubscribe = eventBus.on('cart:updated', ({ items }) => {
+      if (!items || items.length === 0) {
+        setRecos(PRODUCTS.slice(0, 3));
+        return;
+      }
+      const cartIds = new Set(items.map((i) => i.id));
+      const cartCategories = new Set(items.map((i) => i.category));
+      const sameCategory = PRODUCTS.filter(
+        (p) => cartCategories.has(p.category) && !cartIds.has(p.id)
+      );
+      const fillers = PRODUCTS.filter(
+        (p) => !cartCategories.has(p.category) && !cartIds.has(p.id)
+      );
+      setRecos([...sameCategory, ...fillers].slice(0, 3));
+    });
+    return unsubscribe;
   }, []);
 
   const handleAddReco = (product) => {
-    // TODO: ajouter ce produit au panier (meme evenement que ProductGrid)
+    eventBus.emit('cart:add', product);
   };
 
   return (
