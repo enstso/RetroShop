@@ -8,6 +8,9 @@ const PRODUCTS = [
   { id: 7, name: 'NES Classic', price: 120, image: 'nes', category: 'consoles' },
   { id: 8, name: 'Memory Card PS1', price: 15, image: 'ps1mem', category: 'accessoires' },
   { id: 9, name: 'Manette Mega Drive', price: 25, image: 'megadrive', category: 'manettes' },
+  { id: 10, name: 'Manette PS1', price: 22, image: 'ps1pad', category: 'manettes' },
+  { id: 11, name: 'Cartouche Sonic', price: 32, image: 'sonic', category: 'jeux' },
+  { id: 12, name: 'Dreamcast', price: 95, image: 'dreamcast', category: 'consoles' },
 ];
 
 export default PRODUCTS;
