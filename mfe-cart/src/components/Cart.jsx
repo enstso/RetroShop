@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import eventBus from 'shared/eventBus';
+import { createLoggedBus } from 'shared/eventBusLogger';
 import './Cart.css';
+
+const eventBus = createLoggedBus('mfe-cart');
 
 function Cart() {
   const [items, setItems] = useState([]);

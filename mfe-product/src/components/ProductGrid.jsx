@@ -1,7 +1,9 @@
 import React from 'react';
-import eventBus from 'shared/eventBus';
+import { createLoggedBus } from 'shared/eventBusLogger';
 import PRODUCTS from 'shared/products';
 import './ProductGrid.css';
+
+const eventBus = createLoggedBus('mfe-product');
 
 function ProductCard({ product, onAdd }) {
   return (

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import eventBus from 'shared/eventBus';
+import { createLoggedBus } from 'shared/eventBusLogger';
 import ErrorBoundary from './ErrorBoundary';
 import './App.css';
+
+const eventBus = createLoggedBus('shell');
 
 const ProductGrid = lazy(() =>
   import('mfeProduct/ProductGrid').catch(() => ({

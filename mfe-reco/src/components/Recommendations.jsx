@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import eventBus from 'shared/eventBus';
+import { createLoggedBus } from 'shared/eventBusLogger';
 import PRODUCTS from 'shared/products';
 import './Recommendations.css';
+
+const eventBus = createLoggedBus('mfe-reco');
 
 function Recommendations() {
   const [recos, setRecos] = useState(PRODUCTS.slice(0, 3));
