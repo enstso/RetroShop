@@ -1,7 +1,25 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
+import eventBus from 'shared/eventBus';
+import ErrorBoundary from './ErrorBoundary';
 import './App.css';
 
-// TODO: importer les 3 MFEs avec React.lazy()
+const ProductGrid = lazy(() =>
+  import('mfeProduct/ProductGrid').catch(() => ({
+    default: () => <div className="mfe-error">Catalogue indisponible.</div>,
+  }))
+);
+
+const Cart = lazy(() =>
+  import('mfeCart/Cart').catch(() => ({
+    default: () => <div className="mfe-error">Panier indisponible.</div>,
+  }))
+);
+
+const Recommendations = lazy(() =>
+  import('mfeReco/Recommendations').catch(() => ({
+    default: () => <div className="mfe-error">Recommandations indisponibles.</div>,
+  }))
+);
 
 function LoadingFallback({ name }) {
   return <div className="loading-fallback">Chargement {name}...</div>;
@@ -11,7 +29,10 @@ function App() {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    // TODO: ecouter les mises a jour du panier pour le badge
+    const unsubscribe = eventBus.on('cart:updated', ({ count }) => {
+      setCartCount(count);
+    });
+    return unsubscribe;
   }, []);
 
   return (
@@ -22,17 +43,26 @@ function App() {
       </header>
       <main className="shell-main">
         <section className="product-area">
-          {/* TODO: afficher mfe-product avec Suspense */}
-          <LoadingFallback name="Products" />
+          <ErrorBoundary name="Products">
+            <Suspense fallback={<LoadingFallback name="Products" />}>
+              <ProductGrid />
+            </Suspense>
+          </ErrorBoundary>
         </section>
         <aside className="cart-area">
-          {/* TODO: afficher mfe-cart avec Suspense */}
-          <LoadingFallback name="Cart" />
+          <ErrorBoundary name="Cart">
+            <Suspense fallback={<LoadingFallback name="Cart" />}>
+              <Cart />
+            </Suspense>
+          </ErrorBoundary>
         </aside>
       </main>
       <section className="reco-area">
-        {/* TODO: afficher mfe-reco avec Suspense */}
-        <LoadingFallback name="Recommendations" />
+        <ErrorBoundary name="Recommendations">
+          <Suspense fallback={<LoadingFallback name="Recommendations" />}>
+            <Recommendations />
+          </Suspense>
+        </ErrorBoundary>
       </section>
     </div>
   );
